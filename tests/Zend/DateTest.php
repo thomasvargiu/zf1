@@ -448,9 +448,15 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $this->assertSame(             '30', $date->toString(    "s"));
         $this->assertSame(              '0', $date->toString(    "S"));
         $this->assertSame('Indian/Maldives', $date->toString( "zzzz"));
-        $this->assertSame(            'MVT', $date->toString(  "zzz"));
-        $this->assertSame(            'MVT', $date->toString(   "zz"));
-        $this->assertSame(            'MVT', $date->toString(    "z"));
+        if (version_compare(phpversion(), '7.0' , '<')) {
+            $this->assertSame(            'MVT', $date->toString(  "zzz"));
+            $this->assertSame(            'MVT', $date->toString(   "zz"));
+            $this->assertSame(            'MVT', $date->toString(    "z"));
+        } else {
+            $this->assertSame(            '+05', $date->toString(  "zzz"));
+            $this->assertSame(            '+05', $date->toString(   "zz"));
+            $this->assertSame(            '+05', $date->toString(    "z"));
+        }
         $this->assertSame(         '+05:00', $date->toString( "ZZZZ"));
         $this->assertSame(          '+0500', $date->toString(  "ZZZ"));
         $this->assertSame(          '+0500', $date->toString(   "ZZ"));
@@ -5264,9 +5270,9 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
     {
         $date = new Zend_Date('2006-01-02 23:58:59', Zend_Date::ISO_8601, 'en_US');
         $return = $date->toArray();
-        $orig = array('day' => 02, 'month' => 01, 'year' => 2006, 'hour' => 23, 'minute' => 58,
-                      'second' => 59, 'timezone' => 'MVT', 'timestamp' => 1136228339, 'weekday' => 1,
-                      'dayofyear' => 1, 'week' => '01', 'gmtsecs' => 18000);
+        $orig = array('day' => '2', 'month' => '1', 'year' => '2006', 'hour' => '23', 'minute' => '58',
+                      'second' => '59', 'timezone' => 'MVT', 'timestamp' => '1136228339', 'weekday' => '1',
+                      'dayofyear' => '1', 'week' => '01', 'gmtsecs' => '18000');
         $this->assertEquals($orig, $return);
     }
 
