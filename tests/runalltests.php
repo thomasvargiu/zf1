@@ -59,8 +59,13 @@ $result = 0;
 
 // run through phpunit
 while(list(, $file)=each($files)) {
-    if ($_SERVER['TRAVIS_PHP_VERSION'] == 'hhvm' && $file == 'Zend/CodeGenerator/AllTests.php') {
+    if ($_SERVER['TRAVIS_PHP_VERSION'] === 'hhvm' && $file === 'Zend/CodeGenerator/AllTests.php') {
         echo "Skipping $file on HHVM" . PHP_EOL; //gets stuck on the HHVM
+        continue;
+    }
+
+    if (false !== strpos($file, 'Zend/Service/')) {
+        echo "Skipping $file because services are deprecated and not supported" . PHP_EOL;
         continue;
     }
 
