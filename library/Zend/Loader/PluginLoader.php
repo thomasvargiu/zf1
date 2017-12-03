@@ -50,6 +50,12 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
     protected static $_includeFileCacheHandler;
 
     /**
+     * Use only autoload, avoiding looking for class files
+     * @var bool
+     */
+    protected static $_useOnlyAutoload = false;
+
+    /**
      * Instance loaded plugin paths
      *
      * @var array
@@ -389,9 +395,13 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
         foreach ($registry as $prefix => $paths) {
             $className = $prefix . $name;
 
-            if (class_exists($className, false)) {
+            if (class_exists($className, self::isUseOnlyAutoload())) {
                 $found = true;
                 break;
+            }
+
+            if (self::isUseOnlyAutoload()) {
+                continue;
             }
 
             $paths     = array_reverse($paths, true);
@@ -502,5 +512,25 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
             $line = "<?php include_once '$incFile'?>\n";
             fwrite(self::$_includeFileCacheHandler, $line, strlen($line));
         }
+    }
+
+    /**
+     * Use only the autoload, avoiding looking for class files
+     *
+     * @return bool
+     */
+    public static function isUseOnlyAutoload()
+    {
+        return self::$_useOnlyAutoload;
+    }
+
+    /**
+     * Use only the autoload, avoiding looking for class files
+     *
+     * @param bool $useOnlyAutoload
+     */
+    public static function setUseOnlyAutoload($useOnlyAutoload)
+    {
+        self::$_useOnlyAutoload = $useOnlyAutoload;
     }
 }
